@@ -607,7 +607,7 @@ export default function Portfolio3D() {
         >
           <div className="container mx-auto px-4 py-4 flex justify-between items-center">
             <motion.div 
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 flex-shrink-0"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -629,7 +629,7 @@ export default function Portfolio3D() {
                 />
               </motion.a>
             </motion.div>
-            <div className="flex gap-8">
+            <div className="flex gap-4 flex-wrap items-center justify-end w-full md:w-auto">
               {['Home', 'Projects', 'Skills', 'Contact'].map((item, index) => (
                 <motion.a
                   key={item}
@@ -675,14 +675,14 @@ export default function Portfolio3D() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
               >
-          <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-bold flex items-center gap-3 flex-wrap">
+            <h1 className="hero-title text-2xl sm:text-3xl md:text-4xl lg:text-6xl xl:text-7xl font-bold flex items-center gap-2 sm:gap-3 flex-wrap">
             <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
               Rodney Naro
             </span>
             <motion.img
               src="/images/profile.jpg"
               alt="Rodney Naro"
-              className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 rounded-full object-cover border-2 md:border-3 border-blue-400 shadow-lg shadow-blue-400/50"
+              className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 rounded-full object-cover border-2 md:border-3 border-blue-400 shadow-lg shadow-blue-400/50"
               whileHover={{
                 scale: 1.1,
                 rotate: 360,
