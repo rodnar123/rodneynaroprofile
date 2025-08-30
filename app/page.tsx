@@ -11,9 +11,9 @@ import { OrbitControls, Text, Environment, PerspectiveCamera, Float, MeshDistort
 import { EffectComposer, Bloom, ChromaticAberration, Noise, Vignette } from '@react-three/postprocessing';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 
-import { Github, Linkedin, Facebook, ExternalLink, Mail,  MapPin, Code2, Sparkles as SparklesIcon, Layers, Terminal, Smartphone, Globe, Database, Cpu, Zap, Rocket, Shield, Star } from 'lucide-react';
+
+import { Github, Linkedin, Facebook, ExternalLink, Mail,  MapPin, Code2, Sparkles as SparklesIcon, Layers, Terminal, Smartphone, Globe, Database, Cpu, Zap, Rocket, Shield } from 'lucide-react';
 import { extend } from '@react-three/fiber';
 
 // Only register plugins on client
@@ -51,45 +51,45 @@ const HolographicMaterial = shaderMaterial(
 extend({ HolographicMaterial });
 
 // Animated cursor component
-function CustomCursor() {
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const cursorDotRef = useRef<HTMLDivElement>(null);
-  const [isClient, setIsClient] = useState(false);
+// function CustomCursor() {
+//   const cursorRef = useRef<HTMLDivElement>(null);
+//   const cursorDotRef = useRef<HTMLDivElement>(null);
+//   const [isClient, setIsClient] = useState(false);
   
-  useEffect(() => {
-    setIsClient(true);
-    const cursor = cursorRef.current;
-    const cursorDot = cursorDotRef.current;
+//   useEffect(() => {
+//     setIsClient(true);
+//     const cursor = cursorRef.current;
+//     const cursorDot = cursorDotRef.current;
     
-    const moveCursor = (e: MouseEvent) => {
-      if (cursor && cursorDot) {
-        gsap.to(cursor, {
-          x: e.clientX - 20,
-          y: e.clientY - 20,
-          duration: 0.5,
-          ease: "power2.out"
-        });
-        gsap.to(cursorDot, {
-          x: e.clientX - 5,
-          y: e.clientY - 5,
-          duration: 0.1
-        });
-      }
-    };
+//     const moveCursor = (e: MouseEvent) => {
+//       if (cursor && cursorDot) {
+//         gsap.to(cursor, {
+//           x: e.clientX - 20,
+//           y: e.clientY - 20,
+//           duration: 0.5,
+//           ease: "power2.out"
+//         });
+//         gsap.to(cursorDot, {
+//           x: e.clientX - 5,
+//           y: e.clientY - 5,
+//           duration: 0.1
+//         });
+//       }
+//     };
     
-    window.addEventListener('mousemove', moveCursor);
-    return () => window.removeEventListener('mousemove', moveCursor);
-  }, []);
+//     window.addEventListener('mousemove', moveCursor);
+//     return () => window.removeEventListener('mousemove', moveCursor);
+//   }, []);
   
-  if (!isClient) return null;
+//   if (!isClient) return null;
   
-  return (
-    <>
-      <div ref={cursorRef} className="fixed w-10 h-10 border-2 border-blue-500 rounded-full pointer-events-none z-[100] mix-blend-difference hidden lg:block" />
-      <div ref={cursorDotRef} className="fixed w-2.5 h-2.5 bg-blue-500 rounded-full pointer-events-none z-[100] hidden lg:block" />
-    </>
-  );
-}
+//   return (
+//     <>
+//       <div ref={cursorRef} className="fixed w-10 h-10 border-2 border-blue-500 rounded-full pointer-events-none z-[100] mix-blend-difference hidden lg:block" />
+//       <div ref={cursorDotRef} className="fixed w-2.5 h-2.5 bg-blue-500 rounded-full pointer-events-none z-[100] hidden lg:block" />
+//     </>
+//   );
+// }
 
 // Particle field background
 function ParticleField() {
@@ -314,7 +314,42 @@ export default function Portfolio3D() {
   const containerRef = useRef(null);
   const heroRef = useRef(null);
   const projectsRef = useRef(null);
+  const skillsRef = useRef(null);
+  const contactRef = useRef(null);
   const [activeSection, setActiveSection] = useState('home');
+  useEffect(() => {
+    // Intersection Observer for dynamic nav underline
+    if (typeof window !== 'undefined') {
+      const sectionRefs = [
+        { ref: heroRef, name: 'home' },
+        { ref: projectsRef, name: 'projects' },
+        { ref: skillsRef, name: 'skills' },
+        { ref: contactRef, name: 'contact' }
+      ];
+      const handleIntersect = (entries: IntersectionObserverEntry[]) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const found = sectionRefs.find(s => s.ref.current === entry.target);
+            if (found) setActiveSection(found.name);
+          }
+        });
+      };
+      const observer = new window.IntersectionObserver(handleIntersect, {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.5
+      });
+      sectionRefs.forEach(({ ref }) => {
+        if (ref.current) observer.observe(ref.current);
+      });
+      return () => {
+        sectionRefs.forEach(({ ref }) => {
+          if (ref.current) observer.unobserve(ref.current);
+        });
+        observer.disconnect();
+      };
+    }
+  }, []);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [mounted, setMounted] = useState(false);
   const { scrollYProgress } = useScroll();
@@ -325,66 +360,61 @@ export default function Portfolio3D() {
   const mouseY = useMotionValue(0);
 
   // Enhanced projects data
+  // Latest 9 public GitHub repositories for rodnar123
   const projects = [
     {
-      id: 1,
-      title: "Rodney Naro Portfolio",
-      description: "Personal portfolio website built with modern web technologies",
-      tech: ["TypeScript", "React", "Next.js", "Tailwind CSS", "Three.js"],
-      github: "https://github.com/rodnar123/rodneynaroportfolio",
-      color: "#3b82f6",
-      icon: Globe,
-      stats: { stars: 42, forks: 12, issues: 3 }
+      title: "timetable",
+      description: "A smart timetable app for organizing your classes and events.",
+      github: "https://github.com/rodnar123/timetable",
+      color: "#3b82f6"
     },
     {
-      id: 2,
-      title: "Expo React Native CRUD App",
-      description: "Full-stack mobile application with CRUD operations",
-      tech: ["TypeScript", "React Native", "Expo", "MongoDB", "Node.js"],
-      github: "https://github.com/rodnar123/exporeactnativecrudapp",
-      color: "#10b981",
-      icon: Smartphone,
-      stats: { stars: 28, forks: 8, issues: 1 }
+      title: "tutis325",
+      description: "A modern tutorial management system for students and teachers.",
+      github: "https://github.com/rodnar123/tutis325",
+      color: "#10b981"
     },
     {
-      id: 3,
-      title: "Lukim Sepik",
-      description: "Location-based application for the Sepik region",
-      tech: ["TypeScript", "React", "Mapbox", "Geolocation API", "PWA"],
-      github: "https://github.com/rodnar123/Lukim_Sepik",
-      color: "#f59e0b",
-      icon: MapPin,
-      stats: { stars: 35, forks: 15, issues: 5 }
+      title: "onlineappliation",
+      description: "Online application platform for seamless submissions.",
+      github: "https://github.com/rodnar123/onlineappliation",
+      color: "#f59e0b"
     },
     {
-      id: 4,
-      title: "3ran Fintech",
-      description: "Financial technology platform with modern architecture",
-      tech: ["TypeScript", "React", "GraphQL", "Stripe API", "PostgreSQL"],
-      github: "https://github.com/rodnar123/3ranFintect",
-      color: "#8b5cf6",
-      icon: Shield,
-      stats: { stars: 56, forks: 23, issues: 7 }
+      title: "taskmanager",
+      description: "Effortlessly manage your daily tasks and boost productivity.",
+      github: "https://github.com/rodnar123/taskmanager",
+      color: "#8b5cf6"
     },
     {
-      id: 5,
-      title: "Room Scheduling System",
-      description: "Intelligent room booking and scheduling application",
-      tech: ["TypeScript", "React", "Socket.io", "Redis", "Docker"],
-      github: "https://github.com/rodnar123/roomscheduling",
-      color: "#ef4444",
-      icon: Cpu,
-      stats: { stars: 31, forks: 11, issues: 2 }
+      title: "testreacnative",
+      description: "A React Native playground for testing mobile features.",
+      github: "https://github.com/rodnar123/testreacnative",
+      color: "#ef4444"
     },
     {
-      id: 6,
-      title: "3ran Landing Page",
-      description: "Company landing page template using React",
-      tech: ["JavaScript", "React", "GSAP", "Framer Motion", "SEO"],
-      github: "https://github.com/rodnar123/3ranlandingpage",
-      color: "#06b6d4",
-      icon: Rocket,
-      stats: { stars: 22, forks: 9, issues: 0 }
+      title: "3dportfolio",
+      description: "A stunning 3D portfolio to showcase your creative work.",
+      github: "https://github.com/rodnar123/3dportfolio",
+      color: "#06b6d4"
+    },
+    {
+      title: "rodneynaroprofile",
+      description: "Personal profile site built with Next.js and modern tech.",
+      github: "https://github.com/rodnar123/rodneynaroprofile",
+      color: "#f59e0b"
+    },
+    {
+      title: "patientunitechclinic",
+      description: "Clinic management system for patient records and appointments.",
+      github: "https://github.com/rodnar123/patientunitechclinic",
+      color: "#3b82f6"
+    },
+    {
+      title: "hrcasemanagement",
+      description: "HR case management tool for efficient workflow.",
+      github: "https://github.com/rodnar123/hrcasemanagement",
+      color: "#10b981"
     }
   ];
 
@@ -542,7 +572,7 @@ export default function Portfolio3D() {
   return (
     <>
       {mounted && <LoadingScreen progress={loadingProgress} />}
-      {mounted && <CustomCursor />}
+      {/* {mounted && <CustomCursor />} */}
       
       <div ref={containerRef} className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-x-hidden">
         {mounted && (
@@ -588,18 +618,15 @@ export default function Portfolio3D() {
                 whileTap={{ scale: 0.95 }}
               >
                 <motion.img
-                  src="/images/profile.jpg" // Replace with your image path or URL
+                  src="/images/profile.jpg"
                   alt="Rodney Naro"
                   className="w-10 h-10 rounded-full object-cover border-2 border-blue-400"
                   whileHover={{ scale: 1.1, rotate: 360 }}
                   transition={{ duration: 0.5, ease: "easeInOut" }}
                   onError={(e) => {
-                    e.currentTarget.src = '/images/fallback-profile.jpg'; // Fallback image path
+                    e.currentTarget.src = '/images/fallback-profile.jpg';
                   }}
                 />
-                <GlitchText className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-                  RN
-                </GlitchText>
               </motion.a>
             </motion.div>
             <div className="flex gap-8">
@@ -873,8 +900,8 @@ export default function Portfolio3D() {
         </section>
 
         {/* Projects Section with Enhanced Cards */}
-        <section id="projects" ref={projectsRef} className="py-20 projects-section relative">
-          <div className="container mx-auto px-4">
+  <section id="projects" ref={projectsRef} className="py-20 projects-section relative">
+    <div className="container mx-auto px-4">
             <motion.h2 
               className="text-4xl lg:text-5xl xl:text-6xl font-bold text-center mb-16"
               initial={{ opacity: 0, y: 50 }}
@@ -890,7 +917,7 @@ export default function Portfolio3D() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {projects.map((project, index) => (
                 <motion.div
-                  key={project.id}
+                  key={project.title}
                   className="project-card group"
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -906,7 +933,6 @@ export default function Portfolio3D() {
                         background: `radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), ${project.color}40, transparent 50%)`
                       }}
                     />
-                    
                     {/* Top gradient bar */}
                     <div className="h-1 relative overflow-hidden">
                       <motion.div
@@ -917,19 +943,7 @@ export default function Portfolio3D() {
                         transition={{ duration: 1, delay: index * 0.1 }}
                       />
                     </div>
-                    
                     <CardHeader className="relative">
-                      <div className="flex items-center justify-between mb-2">
-                        <project.icon className="h-8 w-8" style={{ color: project.color }} />
-                        <div className="flex gap-2">
-                          {/* GitHub stars */}
-                          <span className="flex items-center gap-1 text-xs text-gray-400">
-                            <Star className="h-3 w-3" />
-                            {project.stats.stars}
-                          </span>
-                        </div>
-                      </div>
-                      
                       <CardTitle className="text-xl text-white flex items-center justify-between group">
                         <span className="group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-500 group-hover:bg-clip-text transition-all duration-300">
                           {project.title}
@@ -938,37 +952,10 @@ export default function Portfolio3D() {
                           <ExternalLink className="h-5 w-5 text-gray-400 hover:text-white transition-all duration-300 group-hover:rotate-45" />
                         </a>
                       </CardTitle>
-                      
                       <CardDescription className="text-gray-400 mt-2">
-                        {project.description}
+                        {project.description || "No description provided."}
                       </CardDescription>
                     </CardHeader>
-                    
-                    <CardContent>
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {project.tech.map((tech, techIndex) => (
-                          <motion.div
-                            key={tech}
-                            initial={{ opacity: 0, scale: 0 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: index * 0.1 + techIndex * 0.05 }}
-                          >
-                            <Badge 
-                              variant="secondary" 
-                              className="bg-gray-700/50 text-gray-300 border border-gray-600/50 hover:border-blue-500/50 transition-all duration-300"
-                            >
-                              {tech}
-                            </Badge>
-                          </motion.div>
-                        ))}
-                      </div>
-                      
-                      {/* Project stats */}
-                      <div className="flex justify-between text-xs text-gray-500 pt-4 border-t border-gray-700/50">
-                        <span>{project.stats.forks} forks</span>
-                        <span>{project.stats.issues} open issues</span>
-                      </div>
-                    </CardContent>
                   </Card>
                 </motion.div>
               ))}
@@ -977,7 +964,7 @@ export default function Portfolio3D() {
         </section>
 
         {/* Skills Section with 3D visualization */}
-        <section id="skills" className="py-20 tech-section relative overflow-hidden">
+  <section id="skills" ref={skillsRef} className="py-20 tech-section relative overflow-hidden">
           <div className="container mx-auto px-4">
             <motion.h2 
               className="text-4xl lg:text-5xl xl:text-6xl font-bold text-center mb-16"
@@ -1133,7 +1120,7 @@ export default function Portfolio3D() {
         </section>
 
         {/* Contact Section with animations */}
-        <section id="contact" className="py-20 relative">
+  <section id="contact" ref={contactRef} className="py-20 relative">
           <div className="container mx-auto px-4">
             <motion.h2 
               className="text-4xl lg:text-5xl xl:text-6xl font-bold text-center mb-16"
